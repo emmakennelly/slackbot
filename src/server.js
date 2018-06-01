@@ -67,6 +67,14 @@ app.listen(port);
 
 console.log(`listening on: ${port}`);
 
+controller.on('channel_join', (bot, event) => {
+  bot.reply('Welcome! If you\'re looking for nearby food options, say \'I\'m hungry\' or just type \'food\'');
+});
+
+controller.on('message_received', (bot, message) => {
+  bot.reply(message, 'got your message');
+});
+
 // example hello response
 controller.hears(['sushi'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   const yelpClient = yelp.client(process.env.YELP_CLIENT_SECRET);
@@ -82,6 +90,11 @@ controller.hears(['sushi'], ['direct_message', 'direct_mention', 'mention'], (bo
   }).catch((e) => {
     console.log(e);
   });
+});
+
+controller.hears('help', ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
+  // this event can be triggered whenever a user needs help
+  bot.reply(message, 'Just say \'I\'m hungry\' or just type \'food\' for nearby options!');
 });
 
 controller.hears(['I\'m hungry', 'food'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
