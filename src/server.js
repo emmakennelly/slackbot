@@ -68,7 +68,7 @@ app.listen(port);
 console.log(`listening on: ${port}`);
 
 // example hello response
-controller.hears(['food'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
+controller.hears(['sushi'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   const yelpClient = yelp.client(process.env.YELP_CLIENT_SECRET);
 
   yelpClient.search({
@@ -84,9 +84,36 @@ controller.hears(['food'], ['direct_message', 'direct_mention', 'mention'], (bot
   });
 });
 
-controller.on('user_typing', (bot, message) => {
-  bot.reply(message, 'stop typing!');
+controller.hears(['I\'m hungry', 'food'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
+  // start a conversation to handle this response
+  bot.startConversation(message, (err, convo) => {
+    if (err) console.log(err);
+    // start a question
+    convo.ask('What kind of food are you in the mood for?', (response) => {
+      convo.ask('What is your current location? (City, State)', (loc) => {
+        console.log(loc);
+        const yelpClient = yelp.client(process.env.YELP_CLIENT_SECRET);
+        yelpClient.search({
+          term: response.text,
+          location: loc.text,
+        }).then((res) => {
+          console.log(res.jsonBody.businesses[0].name);
+
+          res.jsonBody.businesses.forEach((business) => {
+            bot.reply(message, `${business.name} ${business.url}`);
+          });
+        }).catch((e) => {
+          console.log(e);
+        });
+      });
+      convo.next(); // always call this to keep things flowing (check the readme for more info)
+    });
+  });
 });
+
+// controller.on('user_typing', (bot, message) => {
+//   bot.reply(message, 'stop typing!');
+// });
 
 controller.hears(['hello', 'hi', 'howdy'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   bot.api.users.info({ user: message.user }, (err, res) => {
