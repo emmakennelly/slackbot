@@ -122,6 +122,7 @@ controller.hears(['hungry', 'food'], ['direct_message', 'direct_mention', 'menti
         }).catch((e) => {
           console.log(e);
         });
+        convo.next();
       });
       convo.next(); // always call this to keep things flowing (check the readme for more info)
     });
