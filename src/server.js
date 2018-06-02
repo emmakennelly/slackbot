@@ -75,6 +75,10 @@ controller.on('message_received', (bot, message) => {
   bot.reply(message, 'got your message');
 });
 
+controller.on('outgoing_webhook', (bot, message) => {
+  bot.replyPublic(message, 'yeah yeah');
+});
+
 // example hello response
 controller.hears(['sushi'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   const yelpClient = yelp.client(process.env.YELP_CLIENT_SECRET);
