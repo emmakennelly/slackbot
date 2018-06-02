@@ -101,7 +101,7 @@ controller.hears('help', ['direct_message', 'direct_mention', 'mention'], (bot, 
   bot.reply(message, 'Just say \'I\'m hungry\' or just type \'food\' for nearby options!');
 });
 
-controller.hears(['I\'m hungry', 'food'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
+controller.hears(['hungry', 'food'], ['direct_message', 'direct_mention', 'mention'], (bot, message) => {
   // start a conversation to handle this response
   bot.startConversation(message, (err, convo) => {
     if (err) console.log(err);
